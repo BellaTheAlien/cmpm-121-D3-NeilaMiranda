@@ -6,7 +6,7 @@ import "./style.css";
 
 import "./_leafletWorkaround.ts";
 
-//import luck from "./_luck.ts";
+import luck from "./_luck.ts";
 
 // the basic UI elemets
 
@@ -29,9 +29,9 @@ const CLASSROOM_LATLNG = leaflet.latLng(
 );
 
 const GAMEPLAY_ZOOM_LEVEL = 19;
-//const TILE_DEGREES = 1e-4;
-//const NEIGHBORHOOD_SIZE = 8;
-//const CACHE_SPAWN_PROBABILITY = 0.1;
+const TILE_DEGREES = 1e-4;
+const NEIGHBORHOOD_SIZE = 8;
+const CACHE_SPAWN_PROBABILITY = 0.1;
 
 const map = leaflet.map(mapDiv, {
   center: CLASSROOM_LATLNG,
@@ -52,3 +52,22 @@ leaflet
 
 const player = leaflet.marker(CLASSROOM_LATLNG);
 player.addTo(map);
+
+function spawnCells(i: number, j: number) {
+  const origin = CLASSROOM_LATLNG;
+  const bounds = leaflet.latLngBounds([
+    [origin.lat + i * TILE_DEGREES, origin.lng + j * TILE_DEGREES],
+    [origin.lat + (i + 1) * TILE_DEGREES, origin.lng + (j + 1) * TILE_DEGREES],
+  ]);
+
+  const cellRect = leaflet.rectangle(bounds);
+  cellRect.addTo(map);
+}
+
+for (let i = -NEIGHBORHOOD_SIZE; i < NEIGHBORHOOD_SIZE; i++) {
+  for (let j = -NEIGHBORHOOD_SIZE; j < NEIGHBORHOOD_SIZE; j++) {
+    if (luck([i, j].toString()) < CACHE_SPAWN_PROBABILITY) {
+      spawnCells(i, j);
+    }
+  }
+}
