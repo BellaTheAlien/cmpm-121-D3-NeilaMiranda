@@ -18,11 +18,11 @@ finding clues at diffrent map blocks
 Key technical challenge: Can you assemble a map-based user interface using the Leaflet mapping framework?
 Key gameplay challenge: Can players collect and craft tokens from nearby locations to finally make one of sufficiently high value?
 
-### Steps
+### Steps - D3.a
 
 - [x] create the PLAN.md
-- [] move given code from main.ts to reference
-- [] delete everything from main.ts
+- [x] move given code from main.ts to reference
+- [x] delete everything from main.ts
 - [] place the player onto the map
 - [] draw rectangles for the cells on the map
 - [] add a clue/tool for players to find
