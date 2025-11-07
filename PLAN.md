@@ -23,6 +23,6 @@ Key gameplay challenge: Can players collect and craft tokens from nearby locatio
 - [x] create the PLAN.md
 - [x] move given code from main.ts to reference
 - [x] delete everything from main.ts
-- [] place the player onto the map
+- [x] place the player onto the map
 - [] draw rectangles for the cells on the map
 - [] add a clue/tool for players to find
