@@ -28,11 +28,13 @@ const CLASSROOM_LATLNG = leaflet.latLng(
   -122.05703507501151,
 );
 
+// the set game values
 const GAMEPLAY_ZOOM_LEVEL = 19;
 const TILE_DEGREES = 1e-4;
 const NEIGHBORHOOD_SIZE = 8;
 const CACHE_SPAWN_PROBABILITY = 0.1;
 
+// creating the map parameters
 const map = leaflet.map(mapDiv, {
   center: CLASSROOM_LATLNG,
   zoom: GAMEPLAY_ZOOM_LEVEL,
@@ -42,6 +44,7 @@ const map = leaflet.map(mapDiv, {
   scrollWheelZoom: false,
 });
 
+// adding the open street map tile on to the map page
 leaflet
   .tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
@@ -50,9 +53,11 @@ leaflet
   })
   .addTo(map);
 
+// creating the player marker
 const player = leaflet.marker(CLASSROOM_LATLNG);
 player.addTo(map);
 
+// the rectangle cells to be created
 function spawnCells(i: number, j: number) {
   const origin = CLASSROOM_LATLNG;
   const bounds = leaflet.latLngBounds([
@@ -64,6 +69,8 @@ function spawnCells(i: number, j: number) {
   cellRect.addTo(map);
 }
 
+// loopes though the map grid and addeds cells that are next to the player
+// any that pass the luck check are created
 for (let i = -NEIGHBORHOOD_SIZE; i < NEIGHBORHOOD_SIZE; i++) {
   for (let j = -NEIGHBORHOOD_SIZE; j < NEIGHBORHOOD_SIZE; j++) {
     if (luck([i, j].toString()) < CACHE_SPAWN_PROBABILITY) {
