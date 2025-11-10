@@ -71,6 +71,17 @@ let gems: Token[] = [];
 let hand: Rank | null = null;
 
 // taken Insperation from t4ylo on git nad thier take of D3.a - the tokens emojies
+const invatory = document.createElement("div");
+invatory.className = "panel";
+
+function invatoryUpdate() {
+  (invatory.querySelector("#hand") as HTMLElement).textContent = hand
+    ? `Rank ${hand}`
+    : "Empty";
+  statusPanelDiv.textContent = hand
+    ? `Holding Rank ${hand}. Clicki another token of Rank ${hand} withen ${COLLECT_RADIUS}m to merge.`
+    : `Click a token within ${COLLECT_RADIUS}m to pick up`;
+}
 function currentRank(i: number, j: number): Rank {
   const rank = luck([i, j, "tier"].toString());
   if (rank < 0.75) return 1;
@@ -105,6 +116,7 @@ function gemClicked(gem: Token) {
 
     if (hand === null) {
       hand = gem.tier;
+      invatoryUpdate();
       gem.marker.remove();
       gems = gems.filter((t) => t.id !== gem.id);
       return;
@@ -114,6 +126,7 @@ function gemClicked(gem: Token) {
       const newRank = (gem.tier + 1) as Rank;
       setGemTier(gem, Math.min(newRank, 3) as Rank);
       hand = null;
+      invatoryUpdate();
     } else {
       statusPanelDiv.textContent =
         `Tiers must match to add toghter. Currintly holding Tier ${hand}, clicked Tier ${gem.tier}.`;
