@@ -33,6 +33,7 @@ const GAMEPLAY_ZOOM_LEVEL = 19;
 const TILE_DEGREES = 1e-4;
 const NEIGHBORHOOD_SIZE = 8;
 const CACHE_SPAWN_PROBABILITY = 0.1;
+const COLLECT_RADIUS = 60;
 
 // creating the map parameters
 const map = leaflet.map(mapDiv, {
@@ -69,12 +70,89 @@ function spawnCells(i: number, j: number) {
   cellRect.addTo(map);
 }
 
+// creating the tokens and rank - from t4ylo
+type Rank = 1 | 2 | 3;
+type Token = {
+  id: string;
+  latlng: leaflet.LatLng;
+  tier: Rank;
+  marker: leaflet.Marker;
+};
+
+let gems: Token[] = [];
+let hand: Rank | null = null;
+
+// taken Insperation from t4ylo on git nad thier take of D3.a - the tokens emojies
+function currentRank(i: number, j: number): Rank {
+  const rank = luck([i, j, "tier"].toString());
+  if (rank < 0.75) return 1;
+  if (rank < 0.95) return 2;
+  return 3;
+}
+
+function tokenGem(tier: Rank) {
+  const gemEmoji = tier === 1 ? "💎" : tier === 2 ? "💍" : "👑";
+  return leaflet.divIcon({
+    className: "",
+    html: `<div style = "font-size:24px;" > ${gemEmoji} </div>`,
+  });
+}
+
+function setGemTier(tok: Token, newRank: Rank) {
+  tok.tier = newRank;
+  tok.marker.setIcon(tokenGem(newRank));
+  tok.marker.setTooltipContent("Tier ${newRank} token (click to interact)");
+}
+
+function gemClicked(gem: Token) {
+  gem.marker.on("click", () => {
+    const distance = player.getLatLng().distanceTo(gem.latlng);
+
+    if (distance > COLLECT_RADIUS) {
+      alert(
+        `Too far (${distance.toFixed(0)}m). Need around ${COLLECT_RADIUS}m.`,
+      );
+      return;
+    }
+
+    if (hand === null) {
+      hand = gem.tier;
+      gem.marker.remove();
+      gems = gems.filter((t) => t.id !== gem.id);
+      return;
+    }
+
+    if (hand === gem.tier) {
+      const newRank = (gem.tier + 1) as Rank;
+      setGemTier(gem, Math.min(newRank, 3) as Rank);
+      hand = null;
+    } else {
+      statusPanelDiv.textContent =
+        `Tiers must match to add toghter. Currintly holding Tier ${hand}, clicked Tier ${gem.tier}.`;
+    }
+  });
+}
+
+function spawnGems(i: number, j: number) {
+  const lat = CLASSROOM_LATLNG.lat + (i + 0.5) * TILE_DEGREES;
+  const lng = CLASSROOM_LATLNG.lng + (j + 0.5) * TILE_DEGREES;
+  const latlng = leaflet.latLng(lat, lng);
+
+  const tier = currentRank(i, j);
+  const marker = leaflet.marker(latlng, { icon: tokenGem(tier) }).addTo(map);
+  marker.bindTooltip(`Tier ${tier} token (click to interact)`);
+
+  const gem: Token = { id: "${i}-${j}", latlng, tier, marker };
+  gems.push(gem);
+  gemClicked(gem);
+}
+
 // loopes though the map grid and addeds cells that are next to the player
 // any that pass the luck check are created
 for (let i = -NEIGHBORHOOD_SIZE; i < NEIGHBORHOOD_SIZE; i++) {
   for (let j = -NEIGHBORHOOD_SIZE; j < NEIGHBORHOOD_SIZE; j++) {
     if (luck([i, j].toString()) < CACHE_SPAWN_PROBABILITY) {
-      spawnCells(i, j);
+      spawnGems(i, j);
     }
   }
 }
