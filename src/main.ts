@@ -23,9 +23,9 @@ statusPanelDiv.id = "statusPanel";
 document.body.append(statusPanelDiv);
 
 // temp location
-const CLASSROOM_LATLNG = leaflet.latLng(
-  36.997936938057016,
-  -122.05703507501151,
+const LOUVRE_LATLNG = leaflet.latLng(
+  48.86090399522021,
+  2.3376225397014716,
 );
 
 // the set game values
@@ -37,7 +37,7 @@ const COLLECT_RADIUS = 60;
 
 // creating the map parameters
 const map = leaflet.map(mapDiv, {
-  center: CLASSROOM_LATLNG,
+  center: LOUVRE_LATLNG,
   zoom: GAMEPLAY_ZOOM_LEVEL,
   minZoom: GAMEPLAY_ZOOM_LEVEL,
   maxZoom: GAMEPLAY_ZOOM_LEVEL,
@@ -55,7 +55,7 @@ leaflet
   .addTo(map);
 
 // creating the player marker
-const player = leaflet.marker(CLASSROOM_LATLNG);
+const player = leaflet.marker(LOUVRE_LATLNG);
 player.addTo(map);
 
 // creating the tokens and rank - from t4ylo
@@ -122,8 +122,8 @@ function gemClicked(gem: Token) {
 }
 
 function spawnGems(i: number, j: number) {
-  const lat = CLASSROOM_LATLNG.lat + (i + 0.5) * TILE_DEGREES;
-  const lng = CLASSROOM_LATLNG.lng + (j + 0.5) * TILE_DEGREES;
+  const lat = LOUVRE_LATLNG.lat + (i + 0.5) * TILE_DEGREES;
+  const lng = LOUVRE_LATLNG.lng + (j + 0.5) * TILE_DEGREES;
   const latlng = leaflet.latLng(lat, lng);
 
   const tier = currentRank(i, j);
