@@ -25,7 +25,7 @@ Key gameplay challenge: Can players collect and craft tokens from nearby locatio
 - [x] delete everything from main.ts
 - [x] place the player onto the map
 - [x] draw rectangles for the cells on the map
-- [] allow the player to collect tokens
+- [x] allow the player to collect tokens
 - [x] add a clue/tool for players to find - ranks to the tokens
-- [] create an invatory UI for the player's items
+- [x] create an invatory UI for the player's items
 - [x] the player can carry items to diffrent cells

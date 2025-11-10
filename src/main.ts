@@ -71,16 +71,20 @@ let gems: Token[] = [];
 let hand: Rank | null = null;
 
 // taken Insperation from t4ylo on git nad thier take of D3.a - the tokens emojies
-const invatory = document.createElement("div");
-invatory.className = "panel";
+const inventory = document.createElement("div");
+inventory.id = "panel";
+inventory.innerHTML = ` <h3>Inventory</h3>
+<div class = "row"><span>Holding </span><span id = "hand" class = "badge">Empty</span></div>
+`;
+controlPanelDiv.append(inventory);
 
-function invatoryUpdate() {
-  (invatory.querySelector("#hand") as HTMLElement).textContent = hand
+function inventoryUpdate() {
+  (inventory.querySelector("#hand") as HTMLElement).textContent = hand
     ? `Rank ${hand}`
     : "Empty";
   statusPanelDiv.textContent = hand
-    ? `Holding Rank ${hand}. Clicki another token of Rank ${hand} withen ${COLLECT_RADIUS}m to merge.`
-    : `Click a token within ${COLLECT_RADIUS}m to pick up`;
+    ? `Holding Rank ${hand}. Click another gem of Rank ${hand} withen ${COLLECT_RADIUS}m to merge.`
+    : `Click a gem within ${COLLECT_RADIUS}m to pick up`;
 }
 function currentRank(i: number, j: number): Rank {
   const rank = luck([i, j, "tier"].toString());
@@ -92,15 +96,15 @@ function currentRank(i: number, j: number): Rank {
 function tokenGem(tier: Rank) {
   const gemEmoji = tier === 1 ? "💎" : tier === 2 ? "💍" : "👑";
   return leaflet.divIcon({
-    className: "",
-    html: `<div style = "font-size:24px;" > ${gemEmoji} </div>`,
+    className: "gemText",
+    html: `<div> ${gemEmoji} </div>`,
   });
 }
 
 function setGemTier(tok: Token, newRank: Rank) {
   tok.tier = newRank;
   tok.marker.setIcon(tokenGem(newRank));
-  tok.marker.setTooltipContent("Tier ${newRank} token (click to interact)");
+  tok.marker.setTooltipContent("Rank ${newRank} gem (click to interact)");
 }
 
 function gemClicked(gem: Token) {
@@ -116,7 +120,7 @@ function gemClicked(gem: Token) {
 
     if (hand === null) {
       hand = gem.tier;
-      invatoryUpdate();
+      inventoryUpdate();
       gem.marker.remove();
       gems = gems.filter((t) => t.id !== gem.id);
       return;
@@ -126,10 +130,10 @@ function gemClicked(gem: Token) {
       const newRank = (gem.tier + 1) as Rank;
       setGemTier(gem, Math.min(newRank, 3) as Rank);
       hand = null;
-      invatoryUpdate();
+      inventoryUpdate();
     } else {
       statusPanelDiv.textContent =
-        `Tiers must match to add toghter. Currintly holding Tier ${hand}, clicked Tier ${gem.tier}.`;
+        `Ranks must match to add toghter. Currintly holding rank ${hand}, clicked rank ${gem.tier}.`;
     }
   });
 }
@@ -141,7 +145,7 @@ function spawnGems(i: number, j: number) {
 
   const tier = currentRank(i, j);
   const marker = leaflet.marker(latlng, { icon: tokenGem(tier) }).addTo(map);
-  marker.bindTooltip(`Tier ${tier} token (click to interact)`);
+  marker.bindTooltip(`Rank ${tier} gem (click to interact)`);
 
   const gem: Token = { id: "${i}-${j}", latlng, tier, marker };
   gems.push(gem);
