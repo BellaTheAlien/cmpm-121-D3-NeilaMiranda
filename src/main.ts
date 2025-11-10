@@ -58,18 +58,6 @@ leaflet
 const player = leaflet.marker(CLASSROOM_LATLNG);
 player.addTo(map);
 
-// the rectangle cells to be created
-function spawnCells(i: number, j: number) {
-  const origin = CLASSROOM_LATLNG;
-  const bounds = leaflet.latLngBounds([
-    [origin.lat + i * TILE_DEGREES, origin.lng + j * TILE_DEGREES],
-    [origin.lat + (i + 1) * TILE_DEGREES, origin.lng + (j + 1) * TILE_DEGREES],
-  ]);
-
-  const cellRect = leaflet.rectangle(bounds);
-  cellRect.addTo(map);
-}
-
 // creating the tokens and rank - from t4ylo
 type Rank = 1 | 2 | 3;
 type Token = {
