@@ -58,6 +58,12 @@ leaflet
 const player = leaflet.marker(LOUVRE_LATLNG);
 player.addTo(map);
 
+const playerRadius = leaflet.circle(player.getLatLng(), {
+  radius: COLLECT_RADIUS,
+  color: "rgba(204, 17, 173, 1)",
+  fillColor: "rgb(231, 135, 215)",
+}).addTo(map);
+
 // creating the tokens and rank - from t4ylo
 type Rank = 1 | 2 | 3;
 type Token = {
