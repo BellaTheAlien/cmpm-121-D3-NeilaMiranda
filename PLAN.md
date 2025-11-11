@@ -29,3 +29,10 @@ Key gameplay challenge: Can players collect and craft tokens from nearby locatio
 - [x] add a clue/tool for players to find - ranks to the tokens
 - [x] create an invatory UI for the player's items
 - [x] the player can carry items to diffrent cells
+
+### Steps - D3.b
+
+- [] create player movement
+- [] player radius UI
+- [] can drop current token
+- [] vitory by creating the 3rd rank token
