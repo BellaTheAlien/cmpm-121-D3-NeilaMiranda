@@ -70,6 +70,10 @@ type Token = {
 let gems: Token[] = [];
 let hand: Rank | null = null;
 
+// TODO: create cells all over, even empty ones, to place tokens into empty cells
+// a win condition for the player, pop up UI that draws th eplayer attion that something was colleted
+// a visual radious of the player, and movment for the player.
+
 // taken Insperation from t4ylo on git nad thier take of D3.a - the tokens emojies
 const inventory = document.createElement("div");
 inventory.id = "panel";
