@@ -34,5 +34,5 @@ Key gameplay challenge: Can players collect and craft tokens from nearby locatio
 
 - [] create player movement
 - [x] player radius UI
-- [] can drop current token
+- [x] can drop current token
 - [] vitory by creating the 3rd rank token

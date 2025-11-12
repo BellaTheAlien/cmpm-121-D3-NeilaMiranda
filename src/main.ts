@@ -150,6 +150,55 @@ function gemClicked(gem: Token) {
   });
 }
 
+// to place gems back onto the map
+map.on("click", (event: leaflet.LeafletMouseEvent) => {
+  if (hand === null) return;
+
+  const clickLatLng = event.latlng;
+  const distance = player.getLatLng().distanceTo(clickLatLng);
+
+  if (distance > COLLECT_RADIUS) {
+    alert(
+      `Too far (${distance.toFixed(0)}m). Need around ${COLLECT_RADIUS}m.`,
+    );
+    return;
+  }
+
+  const cellId = getCellId(clickLatLng);
+  const existingGem = gems.find((g) => g.id === cellId);
+
+  if (existingGem) {
+    alert("Can't place gem here - it's full");
+    return;
+  }
+
+  const i = Math.round(
+    (clickLatLng.lat - LOUVRE_LATLNG.lat) / TILE_DEGREES - 0.5,
+  );
+  const j = Math.round(
+    (clickLatLng.lng - LOUVRE_LATLNG.lng) / TILE_DEGREES - 0.5,
+  );
+
+  const newGem: Token = {
+    id: `${i}-${j}`,
+    latlng: clickLatLng,
+    tier: hand,
+    marker: leaflet.marker(clickLatLng, { icon: tokenGem(hand) }).addTo(map),
+  };
+  newGem.marker.bindTooltip(`Rank ${hand} gem (click to interact)`);
+  gems.push(newGem);
+  gemClicked(newGem);
+
+  hand = null;
+  inventoryUpdate();
+});
+
+function getCellId(latLng: leaflet.LatLng): string {
+  const i = Math.round((latLng.lat - LOUVRE_LATLNG.lat) / TILE_DEGREES - 0.5);
+  const j = Math.round((latLng.lng - LOUVRE_LATLNG.lng) / TILE_DEGREES - 0.5);
+  return `${i}-${j}`;
+}
+
 function spawnGems(i: number, j: number) {
   const lat = LOUVRE_LATLNG.lat + (i + 0.5) * TILE_DEGREES;
   const lng = LOUVRE_LATLNG.lng + (j + 0.5) * TILE_DEGREES;
