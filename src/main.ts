@@ -58,6 +58,7 @@ leaflet
 const player = leaflet.marker(LOUVRE_LATLNG);
 player.addTo(map);
 
+// the radius UI - shows up in pink
 const playerRadius = leaflet.circle(player.getLatLng(), {
   radius: COLLECT_RADIUS,
   color: "rgba(204, 17, 173, 1)",
@@ -79,7 +80,7 @@ let hand: Rank | null = null;
 
 // TODO: create cells all over, even empty ones, to place tokens into empty cells
 // a win condition for the player, pop up UI that draws th eplayer attion that something was colleted
-// a visual radious of the player, and movment for the player.
+// movment for the player.
 
 // taken Insperation from t4ylo on git nad thier take of D3.a - the tokens emojies
 const inventory = document.createElement("div");
