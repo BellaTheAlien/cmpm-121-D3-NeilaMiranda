@@ -222,3 +222,38 @@ for (let i = -NEIGHBORHOOD_SIZE; i < NEIGHBORHOOD_SIZE; i++) {
     }
   }
 }
+
+// play movement
+interface pointButtons {
+  id: string;
+  text: string;
+  onClick: () => void;
+}
+
+const points = [
+  { id: "north-point", text: "North", dx: 0, dy: 1 },
+  { id: "east-point", text: "East", dx: 1, dy: 0 },
+  { id: "south-point", text: "South", dx: 0, dy: -1 },
+  { id: "west-point", text: "West", dx: -1, dy: 0 },
+];
+
+points.forEach((config) => {
+  const button = document.createElement("button");
+  button.id = config.id;
+  button.textContent = config.text;
+  button.className = "point-button";
+  button.addEventListener("click", () => movePlayer(config.dx, config.dy));
+  controlPanelDiv.append(button);
+});
+
+// function taken insperation from BeReyes1 D3
+function movePlayer(dx: number, dy: number) {
+  const current = player.getLatLng();
+  const newPos = leaflet.latLng(
+    current.lat + dy * TILE_DEGREES,
+    current.lng + dx * TILE_DEGREES,
+  );
+
+  player.setLatLng(newPos);
+  playerRadius.setLatLng(newPos);
+}

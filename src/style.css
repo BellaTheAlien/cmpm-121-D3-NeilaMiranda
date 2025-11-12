@@ -1,5 +1,10 @@
 #controlPanel {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 0.5rem;
   padding: 1rem;
+  width: fit-content;
 }
 
 #statusPanel {
@@ -13,13 +18,42 @@
 }
 #panel {
   padding: 1rem;
-  color: blueviolet;
-  background-color: bisque;
+  color: rgb(0, 0, 0);
+  background-color: rgb(126, 126, 126);
   border-radius: 6px;
 }
 
 #hand {
-  color: blueviolet;
+  color: rgb(17, 0, 255);
+}
+
+.point-button {
+  padding: 8px;
+  background-color: rgb(194, 194, 194);
+  border-radius: 6px;
+  cursor: pointer;
+}
+.point-button:hover {
+  background-color: rgb(77, 77, 77);
+}
+#north-point {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+#east-point {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+#south-point {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+#west-point {
+  grid-column: 1;
+  grid-row: 2;
 }
 
 .gemText {

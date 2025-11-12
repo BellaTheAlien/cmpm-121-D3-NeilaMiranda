@@ -32,7 +32,7 @@ Key gameplay challenge: Can players collect and craft tokens from nearby locatio
 
 ### Steps - D3.b
 
-- [] create player movement
+- [x] create player movement
 - [x] player radius UI
 - [x] can drop current token
 - [] vitory by creating the 3rd rank token
