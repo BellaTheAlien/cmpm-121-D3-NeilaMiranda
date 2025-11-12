@@ -8,7 +8,9 @@ import "./_leafletWorkaround.ts";
 
 import luck from "./_luck.ts";
 
-// the basic UI elemets
+/*
+ **  -- UI ELEMENTS --
+ */
 
 const controlPanelDiv = document.createElement("div");
 controlPanelDiv.id = "constrolPanel";
@@ -28,7 +30,9 @@ const LOUVRE_LATLNG = leaflet.latLng(
   2.3376225397014716,
 );
 
-// the set game values
+/*
+ **  -- SET GAME VALUES --
+ */
 const GAMEPLAY_ZOOM_LEVEL = 19;
 const TILE_DEGREES = 1e-4;
 const NEIGHBORHOOD_SIZE = 8;
@@ -54,7 +58,9 @@ leaflet
   })
   .addTo(map);
 
-// creating the player marker
+/*
+ **  -- PLAYER --
+ */
 const player = leaflet.marker(LOUVRE_LATLNG);
 player.addTo(map);
 
@@ -65,6 +71,10 @@ const playerRadius = leaflet.circle(player.getLatLng(), {
   fillColor: "rgb(231, 135, 215)",
 });
 playerRadius.addTo(map);
+
+/*
+ **  -- RANKS and TOKENS --
+ */
 
 // creating the tokens and rank - from t4ylo
 type Rank = 1 | 2 | 3;
@@ -78,11 +88,10 @@ type Token = {
 let gems: Token[] = [];
 let hand: Rank | null = null;
 
-// TODO: create cells all over, even empty ones, to place tokens into empty cells
-// a win condition for the player, pop up UI that draws th eplayer attion that something was colleted
-// movment for the player.
-
 // taken Insperation from t4ylo on git nad thier take of D3.a - the tokens emojies
+/*
+ **  -- INVENTORY --
+ */
 const inventory = document.createElement("div");
 inventory.id = "panel";
 inventory.innerHTML = ` <h3>Inventory</h3>
@@ -98,6 +107,12 @@ function inventoryUpdate() {
     ? `Holding Rank ${hand}. Click another gem of Rank ${hand} withen ${COLLECT_RADIUS}m to merge.`
     : `Click a gem within ${COLLECT_RADIUS}m to pick up`;
 }
+
+/*
+ **  -- GEMMS LOGIC --
+ */
+
+// sets the gems ranks
 function currentRank(i: number, j: number): Rank {
   const rank = luck([i, j, "tier"].toString());
   if (rank < 0.75) return 1;
@@ -119,6 +134,7 @@ function setGemTier(tok: Token, newRank: Rank) {
   tok.marker.setTooltipContent("Rank ${newRank} gem (click to interact)");
 }
 
+// what to do when gems are clicked
 function gemClicked(gem: Token) {
   gem.marker.on("click", () => {
     const distance = player.getLatLng().distanceTo(gem.latlng);
@@ -199,6 +215,10 @@ function getCellId(latLng: leaflet.LatLng): string {
   return `${i}-${j}`;
 }
 
+/*
+ **  -- SPAWNS IN GEMMS --
+ */
+
 function spawnGems(i: number, j: number) {
   const lat = LOUVRE_LATLNG.lat + (i + 0.5) * TILE_DEGREES;
   const lng = LOUVRE_LATLNG.lng + (j + 0.5) * TILE_DEGREES;
@@ -223,13 +243,11 @@ for (let i = -NEIGHBORHOOD_SIZE; i < NEIGHBORHOOD_SIZE; i++) {
   }
 }
 
-// play movement
-interface pointButtons {
-  id: string;
-  text: string;
-  onClick: () => void;
-}
+/*
+ **  -- PLAYER MOVMENT --
+ */
 
+// creating the points
 const points = [
   { id: "north-point", text: "North", dx: 0, dy: 1 },
   { id: "east-point", text: "East", dx: 1, dy: 0 },
@@ -237,6 +255,7 @@ const points = [
   { id: "west-point", text: "West", dx: -1, dy: 0 },
 ];
 
+// buttons added to the page
 points.forEach((config) => {
   const button = document.createElement("button");
   button.id = config.id;
@@ -246,7 +265,8 @@ points.forEach((config) => {
   controlPanelDiv.append(button);
 });
 
-// function taken insperation from BeReyes1 D3
+// function taken insperation from BeReyes1's D3
+// calculates where the player moved to
 function movePlayer(dx: number, dy: number) {
   const current = player.getLatLng();
   const newPos = leaflet.latLng(
