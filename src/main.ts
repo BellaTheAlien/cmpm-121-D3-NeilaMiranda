@@ -159,6 +159,11 @@ function gemClicked(gem: Token) {
       setGemTier(gem, Math.min(newRank, 3) as Rank);
       hand = null;
       inventoryUpdate();
+      if (countRank3Token() > 3) {
+        alert(
+          `YOU STOLE FROM THE LOUVRE! (that was easy)`,
+        );
+      }
     } else {
       statusPanelDiv.textContent =
         `Ranks must match to add toghter. Currintly holding rank ${hand}, clicked rank ${gem.tier}.`;
@@ -228,7 +233,7 @@ function spawnGems(i: number, j: number) {
   const marker = leaflet.marker(latlng, { icon: tokenGem(tier) }).addTo(map);
   marker.bindTooltip(`Rank ${tier} gem (click to interact)`);
 
-  const gem: Token = { id: "${i}-${j}", latlng, tier, marker };
+  const gem: Token = { id: `${i}-${j}`, latlng, tier, marker };
   gems.push(gem);
   gemClicked(gem);
 }
@@ -276,4 +281,12 @@ function movePlayer(dx: number, dy: number) {
 
   player.setLatLng(newPos);
   playerRadius.setLatLng(newPos);
+}
+
+/*
+ **  -- WIN CON --
+ */
+
+function countRank3Token(): number {
+  return gems.filter((gem) => gem.tier === 3).length;
 }
