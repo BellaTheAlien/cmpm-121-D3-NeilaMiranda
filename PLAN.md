@@ -36,3 +36,9 @@ Key gameplay challenge: Can players collect and craft tokens from nearby locatio
 - [x] player radius UI
 - [x] can drop current token
 - [x] vitory by creating the 3rd rank token
+
+### Steps - D3.c
+
+- [] add some Flyweight pattern
+- [] refacture the cells/token gemeration
+- [] add the Memento pattern to restore tokens that wherer taken off screen

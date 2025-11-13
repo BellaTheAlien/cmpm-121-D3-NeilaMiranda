@@ -39,6 +39,8 @@ const NEIGHBORHOOD_SIZE = 8;
 const CACHE_SPAWN_PROBABILITY = 0.1;
 const COLLECT_RADIUS = 60;
 
+// map for the cells
+
 // creating the map parameters
 const map = leaflet.map(mapDiv, {
   center: LOUVRE_LATLNG,
