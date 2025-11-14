@@ -220,6 +220,10 @@ map.on("click", (event: leaflet.LeafletMouseEvent) => {
       // add the gems togther
       state.tier = Math.min(state.tier + 1, 3) as Rank;
       hand = null;
+
+      if (state.tier === 3) {
+        rank3GemsCount();
+      }
     } else if (!state.hasGem) {
       // to place back the gem
       state.hasGem = true;
@@ -244,6 +248,16 @@ function spawnGems(i: number, j: number, r: Rank) {
   const marker = leaflet.marker(latlng, { icon: tokenGem(r) }).addTo(map);
   marker.bindTooltip(`Rank ${r} gem (click to interact)`);
   tokenCells.set(getTokenKey(i, j), marker);
+}
+
+let rank3GemTotal = 0;
+function rank3GemsCount() {
+  rank3GemTotal += 1;
+  if (rank3GemTotal >= 5) {
+    statusPanelDiv.textContent =
+      "You stole from the Louve! That was easy, wasn't it? You win!";
+    map.off("click");
+  }
 }
 
 /*
