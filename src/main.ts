@@ -39,8 +39,6 @@ const NEIGHBORHOOD_SIZE = 8;
 const CACHE_SPAWN_PROBABILITY = 0.1;
 const COLLECT_RADIUS = 60;
 
-// map for the cells
-
 // creating the map parameters
 const map = leaflet.map(mapDiv, {
   center: LOUVRE_LATLNG,
@@ -86,8 +84,6 @@ type Token = {
   tier: Rank;
   marker: leaflet.Marker;
 };
-
-let gems: Token[] = [];
 let hand: Rank | null = null;
 
 // taken Insperation from t4ylo on git nad thier take of D3.a - the tokens emojies
@@ -113,7 +109,6 @@ function inventoryUpdate() {
 /*
  **  -- GEMMS LOGIC --
  */
-
 // sets the gems ranks
 function currentRank(i: number, j: number): Rank {
   const rank = luck([i, j, "tier"].toString());
@@ -137,6 +132,7 @@ function setGemTier(tok: Token, newRank: Rank) {
 }
 
 // what to do when gems are clicked
+/*
 function gemClicked(gem: Token) {
   gem.marker.on("click", () => {
     const distance = player.getLatLng().distanceTo(gem.latlng);
@@ -172,8 +168,10 @@ function gemClicked(gem: Token) {
     }
   });
 }
+  */
 
 // to place gems back onto the map
+/*
 map.on("click", (event: leaflet.LeafletMouseEvent) => {
   if (hand === null) return;
 
@@ -221,11 +219,39 @@ function getCellId(latLng: leaflet.LatLng): string {
   const j = Math.round((latLng.lng - LOUVRE_LATLNG.lng) / TILE_DEGREES - 0.5);
   return `${i}-${j}`;
 }
+  */
+
+// map for the tokens
+// insperation from BeReyes1's D3 with making the cells maps
+const tokenCells = new Map();
+const tokenStates = new Map<
+  string,
+  { hasGem: boolean; tier?: Rank | undefined }
+>();
+
+function getTokenKey(i: number, j: number): string {
+  return `${i},${j}`;
+}
 
 /*
  **  -- SPAWNS IN GEMMS --
  */
 
+function generateTokens(i: number, j: number) {
+  const key = getTokenKey(i, j);
+
+  if (!tokenStates.has(key)) {
+    const checkSpawn = luck([i, j].toString()) < CACHE_SPAWN_PROBABILITY;
+    tokenStates.set(key, {
+      hasGem: checkSpawn,
+      tier: checkSpawn ? currentRank(i, j) : undefined,
+    });
+  }
+
+  return tokenStates.get(key)!;
+}
+
+/*
 function spawnGems(i: number, j: number) {
   const lat = LOUVRE_LATLNG.lat + (i + 0.5) * TILE_DEGREES;
   const lng = LOUVRE_LATLNG.lng + (j + 0.5) * TILE_DEGREES;
@@ -236,16 +262,18 @@ function spawnGems(i: number, j: number) {
   marker.bindTooltip(`Rank ${tier} gem (click to interact)`);
 
   const gem: Token = { id: `${i}-${j}`, latlng, tier, marker };
+  tokenCells.set(latlng, gem);
   gems.push(gem);
   gemClicked(gem);
 }
+  */
 
 // loopes though the map grid and addeds cells that are next to the player
 // any that pass the luck check are created
 for (let i = -NEIGHBORHOOD_SIZE; i < NEIGHBORHOOD_SIZE; i++) {
   for (let j = -NEIGHBORHOOD_SIZE; j < NEIGHBORHOOD_SIZE; j++) {
     if (luck([i, j].toString()) < CACHE_SPAWN_PROBABILITY) {
-      spawnGems(i, j);
+      generateTokens(i, j);
     }
   }
 }
@@ -289,6 +317,8 @@ function movePlayer(dx: number, dy: number) {
  **  -- WIN CON --
  */
 
+/*
 function countRank3Token(): number {
   return gems.filter((gem) => gem.tier === 3).length;
 }
+  */
