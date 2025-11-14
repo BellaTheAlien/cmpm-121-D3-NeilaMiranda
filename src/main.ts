@@ -84,7 +84,7 @@ type Token = {
   tier: Rank;
   marker: leaflet.Marker;
 };
-let hand: Rank | null = null;
+//let hand: Rank | null = null;
 
 // taken Insperation from t4ylo on git nad thier take of D3.a - the tokens emojies
 /*
@@ -97,6 +97,7 @@ inventory.innerHTML = ` <h3>Inventory</h3>
 `;
 controlPanelDiv.append(inventory);
 
+/*
 function inventoryUpdate() {
   (inventory.querySelector("#hand") as HTMLElement).textContent = hand
     ? `Rank ${hand}`
@@ -105,6 +106,7 @@ function inventoryUpdate() {
     ? `Holding Rank ${hand}. Click another gem of Rank ${hand} withen ${COLLECT_RADIUS}m to merge.`
     : `Click a gem within ${COLLECT_RADIUS}m to pick up`;
 }
+    */
 
 /*
  **  -- GEMMS LOGIC --
@@ -117,6 +119,7 @@ function currentRank(i: number, j: number): Rank {
   return 3;
 }
 
+/*
 function tokenGem(tier: Rank) {
   const gemEmoji = tier === 1 ? "💎" : tier === 2 ? "💍" : "👑";
   return leaflet.divIcon({
@@ -125,11 +128,13 @@ function tokenGem(tier: Rank) {
   });
 }
 
+
 function setGemTier(tok: Token, newRank: Rank) {
   tok.tier = newRank;
   tok.marker.setIcon(tokenGem(newRank));
   tok.marker.setTooltipContent("Rank ${newRank} gem (click to interact)");
 }
+  */
 
 // what to do when gems are clicked
 /*
@@ -223,7 +228,8 @@ function getCellId(latLng: leaflet.LatLng): string {
 
 // map for the tokens
 // insperation from BeReyes1's D3 with making the cells maps
-const tokenCells = new Map();
+
+//const tokenCells = new Map();
 const tokenStates = new Map<
   string,
   { hasGem: boolean; tier?: Rank | undefined }
