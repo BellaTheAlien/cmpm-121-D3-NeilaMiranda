@@ -279,6 +279,7 @@ function movePlayer(dx: number, dy: number) {
 
   player.setLatLng(newPos);
   playerRadius.setLatLng(newPos);
+  map.setView(player.getLatLng());
 
   renderGems();
 }
