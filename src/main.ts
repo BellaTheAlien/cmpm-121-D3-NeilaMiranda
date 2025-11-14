@@ -297,3 +297,6 @@ function movePlayer(dx: number, dy: number) {
 
   renderGems();
 }
+
+// to spawn the gems when the game loads
+renderGems();
