@@ -84,7 +84,8 @@ type Token = {
   tier: Rank;
   marker: leaflet.Marker;
 };
-//let hand: Rank | null = null;
+
+let hand: Rank | null = null;
 
 // taken Insperation from t4ylo on git nad thier take of D3.a - the tokens emojies
 /*
@@ -97,7 +98,6 @@ inventory.innerHTML = ` <h3>Inventory</h3>
 `;
 controlPanelDiv.append(inventory);
 
-/*
 function inventoryUpdate() {
   (inventory.querySelector("#hand") as HTMLElement).textContent = hand
     ? `Rank ${hand}`
@@ -106,7 +106,6 @@ function inventoryUpdate() {
     ? `Holding Rank ${hand}. Click another gem of Rank ${hand} withen ${COLLECT_RADIUS}m to merge.`
     : `Click a gem within ${COLLECT_RADIUS}m to pick up`;
 }
-    */
 
 /*
  **  -- GEMMS LOGIC --
@@ -119,7 +118,6 @@ function currentRank(i: number, j: number): Rank {
   return 3;
 }
 
-/*
 function tokenGem(tier: Rank) {
   const gemEmoji = tier === 1 ? "💎" : tier === 2 ? "💍" : "👑";
   return leaflet.divIcon({
@@ -128,108 +126,11 @@ function tokenGem(tier: Rank) {
   });
 }
 
-
-function setGemTier(tok: Token, newRank: Rank) {
-  tok.tier = newRank;
-  tok.marker.setIcon(tokenGem(newRank));
-  tok.marker.setTooltipContent("Rank ${newRank} gem (click to interact)");
-}
-  */
-
-// what to do when gems are clicked
-/*
-function gemClicked(gem: Token) {
-  gem.marker.on("click", () => {
-    const distance = player.getLatLng().distanceTo(gem.latlng);
-
-    if (distance > COLLECT_RADIUS) {
-      alert(
-        `Too far (${distance.toFixed(0)}m). Need around ${COLLECT_RADIUS}m.`,
-      );
-      return;
-    }
-
-    if (hand === null) {
-      hand = gem.tier;
-      inventoryUpdate();
-      gem.marker.remove();
-      gems = gems.filter((t) => t.id !== gem.id);
-      return;
-    }
-
-    if (hand === gem.tier) {
-      const newRank = (gem.tier + 1) as Rank;
-      setGemTier(gem, Math.min(newRank, 3) as Rank);
-      hand = null;
-      inventoryUpdate();
-      if (countRank3Token() > 3) {
-        alert(
-          `YOU STOLE FROM THE LOUVRE! (that was easy)`,
-        );
-      }
-    } else {
-      statusPanelDiv.textContent =
-        `Ranks must match to add toghter. Currintly holding rank ${hand}, clicked rank ${gem.tier}.`;
-    }
-  });
-}
-  */
-
-// to place gems back onto the map
-/*
-map.on("click", (event: leaflet.LeafletMouseEvent) => {
-  if (hand === null) return;
-
-  const clickLatLng = event.latlng;
-  const distance = player.getLatLng().distanceTo(clickLatLng);
-
-  if (distance > COLLECT_RADIUS) {
-    alert(
-      `Too far (${distance.toFixed(0)}m). Need around ${COLLECT_RADIUS}m.`,
-    );
-    return;
-  }
-
-  const cellId = getCellId(clickLatLng);
-  const existingGem = gems.find((g) => g.id === cellId);
-
-  if (existingGem) {
-    alert("Can't place gem here - it's full");
-    return;
-  }
-
-  const i = Math.round(
-    (clickLatLng.lat - LOUVRE_LATLNG.lat) / TILE_DEGREES - 0.5,
-  );
-  const j = Math.round(
-    (clickLatLng.lng - LOUVRE_LATLNG.lng) / TILE_DEGREES - 0.5,
-  );
-
-  const newGem: Token = {
-    id: `${i}-${j}`,
-    latlng: clickLatLng,
-    tier: hand,
-    marker: leaflet.marker(clickLatLng, { icon: tokenGem(hand) }).addTo(map),
-  };
-  newGem.marker.bindTooltip(`Rank ${hand} gem (click to interact)`);
-  gems.push(newGem);
-  gemClicked(newGem);
-
-  hand = null;
-  inventoryUpdate();
-});
-
-function getCellId(latLng: leaflet.LatLng): string {
-  const i = Math.round((latLng.lat - LOUVRE_LATLNG.lat) / TILE_DEGREES - 0.5);
-  const j = Math.round((latLng.lng - LOUVRE_LATLNG.lng) / TILE_DEGREES - 0.5);
-  return `${i}-${j}`;
-}
-  */
-
 // map for the tokens
 // insperation from BeReyes1's D3 with making the cells maps
 
-//const tokenCells = new Map();
+//const gemLayer = leaflet.layerGroup().addTo(map);
+const tokenCells = new Map<string, L.Marker>();
 const tokenStates = new Map<
   string,
   { hasGem: boolean; tier?: Rank | undefined }
@@ -257,31 +158,94 @@ function generateTokens(i: number, j: number) {
   return tokenStates.get(key)!;
 }
 
-/*
-function spawnGems(i: number, j: number) {
+function renderGems() {
+  // remove any old gems
+  Array.from(tokenCells.values()).forEach((marker) => marker.remove());
+  tokenCells.clear();
+
+  const playerLatLng = player.getLatLng();
+  const playerLat = Math.round(
+    (playerLatLng.lat - LOUVRE_LATLNG.lat) / TILE_DEGREES - 0.5,
+  );
+  const playerLng = Math.round(
+    (playerLatLng.lng - LOUVRE_LATLNG.lng) / TILE_DEGREES - 0.5,
+  );
+
+  for (
+    let i = playerLat - NEIGHBORHOOD_SIZE;
+    i < playerLat + NEIGHBORHOOD_SIZE;
+    i++
+  ) {
+    for (
+      let j = playerLng - NEIGHBORHOOD_SIZE;
+      j < playerLng + NEIGHBORHOOD_SIZE;
+      j++
+    ) {
+      const state = generateTokens(i, j);
+
+      if (state.hasGem && state.tier) {
+        spawnGems(i, j, state.tier);
+      }
+    }
+  }
+}
+
+map.on("click", (event: leaflet.LeafletMouseEvent) => {
+  const clickLatLng = event.latlng;
+  const distance = player.getLatLng().distanceTo(clickLatLng);
+
+  if (distance > COLLECT_RADIUS) {
+    alert(
+      `Too far (${distance.toFixed(0)}m). Need around ${COLLECT_RADIUS}m.`,
+    );
+    return;
+  }
+
+  const x = Math.round(
+    (clickLatLng.lat - LOUVRE_LATLNG.lat) / TILE_DEGREES - 0.5,
+  );
+  const y = Math.round(
+    (clickLatLng.lng - LOUVRE_LATLNG.lng) / TILE_DEGREES - 0.5,
+  );
+  //const key = getTokenKey(x, y);
+  const state = generateTokens(x, y);
+
+  // empty hand
+  if (hand === null) {
+    if (state.hasGem && state.tier) {
+      hand = state.tier;
+      state.hasGem = false;
+    }
+  } else {
+    // when holding a gem
+    if (state.hasGem && state.tier === hand) {
+      // add the gems togther
+      state.tier = Math.min(state.tier + 1, 3) as Rank;
+      hand = null;
+    } else if (!state.hasGem) {
+      // to place back the gem
+      state.hasGem = true;
+      state.tier = hand!;
+      hand = null;
+    } else {
+      // check - if diffrent rank was clicked
+      statusPanelDiv.textContent =
+        `Ranks must match to add toghter. Currintly holding rank ${hand}, clicked rank ${state.tier}.`;
+    }
+  }
+  inventoryUpdate();
+  renderGems();
+});
+
+function spawnGems(i: number, j: number, r: Rank) {
   const lat = LOUVRE_LATLNG.lat + (i + 0.5) * TILE_DEGREES;
   const lng = LOUVRE_LATLNG.lng + (j + 0.5) * TILE_DEGREES;
   const latlng = leaflet.latLng(lat, lng);
 
-  const tier = currentRank(i, j);
-  const marker = leaflet.marker(latlng, { icon: tokenGem(tier) }).addTo(map);
-  marker.bindTooltip(`Rank ${tier} gem (click to interact)`);
-
-  const gem: Token = { id: `${i}-${j}`, latlng, tier, marker };
-  tokenCells.set(latlng, gem);
-  gems.push(gem);
-  gemClicked(gem);
-}
-  */
-
-// loopes though the map grid and addeds cells that are next to the player
-// any that pass the luck check are created
-for (let i = -NEIGHBORHOOD_SIZE; i < NEIGHBORHOOD_SIZE; i++) {
-  for (let j = -NEIGHBORHOOD_SIZE; j < NEIGHBORHOOD_SIZE; j++) {
-    if (luck([i, j].toString()) < CACHE_SPAWN_PROBABILITY) {
-      generateTokens(i, j);
-    }
-  }
+  //const tier = currentRank(i, j);
+  const marker = leaflet.marker(latlng, { icon: tokenGem(r) }).addTo(map);
+  marker.bindTooltip(`Rank ${r} gem (click to interact)`);
+  tokenCells.set(getTokenKey(i, j), marker);
 }
 
 /*
@@ -317,14 +281,6 @@ function movePlayer(dx: number, dy: number) {
 
   player.setLatLng(newPos);
   playerRadius.setLatLng(newPos);
-}
 
-/*
- **  -- WIN CON --
- */
-
-/*
-function countRank3Token(): number {
-  return gems.filter((gem) => gem.tier === 3).length;
+  renderGems();
 }
-  */

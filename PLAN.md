@@ -39,6 +39,8 @@ Key gameplay challenge: Can players collect and craft tokens from nearby locatio
 
 ### Steps - D3.c
 
-- [] add some Flyweight pattern, creating maps for the cells
-- [] refacture the cells/token gemeration
-- [] add the Memento pattern to restore tokens that wherer taken off screen
+- [x] add some Flyweight pattern, creating maps for the cells
+- [x] refacture the cells/token gemeration
+- [x] add the Memento pattern to restore tokens that where taken off screen
+- [] fix the cells and token click - the emoji and cells aren't lined up
+- [] add back the win condition
