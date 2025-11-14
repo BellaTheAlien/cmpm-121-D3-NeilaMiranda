@@ -24,7 +24,7 @@ const statusPanelDiv = document.createElement("div");
 statusPanelDiv.id = "statusPanel";
 document.body.append(statusPanelDiv);
 
-// temp location
+// location
 const LOUVRE_LATLNG = leaflet.latLng(
   48.86090399522021,
   2.3376225397014716,
@@ -78,16 +78,8 @@ playerRadius.addTo(map);
 
 // creating the tokens and rank - from t4ylo
 type Rank = 1 | 2 | 3;
-type Token = {
-  id: string;
-  latlng: leaflet.LatLng;
-  tier: Rank;
-  marker: leaflet.Marker;
-};
-
 let hand: Rank | null = null;
 
-// taken Insperation from t4ylo on git nad thier take of D3.a - the tokens emojies
 /*
  **  -- INVENTORY --
  */
@@ -109,7 +101,9 @@ function inventoryUpdate() {
 
 /*
  **  -- GEMMS LOGIC --
+  taken Insperation from t4ylo on git nad thier take of D3.a - the tokens emojies
  */
+
 // sets the gems ranks
 function currentRank(i: number, j: number): Rank {
   const rank = luck([i, j, "tier"].toString());
@@ -126,10 +120,11 @@ function tokenGem(tier: Rank) {
   });
 }
 
-// map for the tokens
+/*
+ **  -- MAP FOR THE TOKENS --
+ */
 // insperation from BeReyes1's D3 with making the cells maps
 
-//const gemLayer = leaflet.layerGroup().addTo(map);
 const tokenCells = new Map<string, L.Marker>();
 const tokenStates = new Map<
   string,
@@ -141,13 +136,14 @@ function getTokenKey(i: number, j: number): string {
 }
 
 /*
- **  -- SPAWNS IN GEMMS --
+ **  -- GENERATE IN GEMMS --
  */
 
 function generateTokens(i: number, j: number) {
   const key = getTokenKey(i, j);
 
   if (!tokenStates.has(key)) {
+    // check if the cell can have a token
     const checkSpawn = luck([i, j].toString()) < CACHE_SPAWN_PROBABILITY;
     tokenStates.set(key, {
       hasGem: checkSpawn,
@@ -163,6 +159,7 @@ function renderGems() {
   Array.from(tokenCells.values()).forEach((marker) => marker.remove());
   tokenCells.clear();
 
+  // did get help from Brace to understand the gems to spawn with the player
   const playerLatLng = player.getLatLng();
   const playerLat = Math.round(
     (playerLatLng.lat - LOUVRE_LATLNG.lat) / TILE_DEGREES - 0.5,
@@ -190,6 +187,8 @@ function renderGems() {
   }
 }
 
+// When the user clicks around the map
+
 map.on("click", (event: leaflet.LeafletMouseEvent) => {
   const clickLatLng = event.latlng;
   const distance = player.getLatLng().distanceTo(clickLatLng);
@@ -207,7 +206,6 @@ map.on("click", (event: leaflet.LeafletMouseEvent) => {
   const y = Math.round(
     (clickLatLng.lng - LOUVRE_LATLNG.lng) / TILE_DEGREES - 0.5,
   );
-  //const key = getTokenKey(x, y);
   const state = generateTokens(x, y);
 
   // empty hand
