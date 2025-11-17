@@ -166,8 +166,8 @@ function tokenGem(tier: Rank) {
  ** conversion function from latlng to tile coordinates
  */
 function latLngToTile(lat: number, lng: number): [number, number] {
-  const i = Math.floor((lat - LOUVRE_LATLNG.lat) / TILE_DEGREES - 0.5);
-  const j = Math.floor((lng - LOUVRE_LATLNG.lng) / TILE_DEGREES - 0.5);
+  const i = Math.round((lat - LOUVRE_LATLNG.lat) / TILE_DEGREES - 0.5);
+  const j = Math.round((lng - LOUVRE_LATLNG.lng) / TILE_DEGREES - 0.5);
   return [i, j];
 }
 
