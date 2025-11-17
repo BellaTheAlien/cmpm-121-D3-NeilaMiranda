@@ -48,5 +48,5 @@ Key gameplay challenge: Can players collect and craft tokens from nearby locatio
 ### Steps - D3.d
 
 - [] fix the cells and token click - the emoji and cells aren't lined up
-- [] add real time tracker from the users phone/location
+- [x] add real time tracker from the users phone/location
 - [] add a way to track the users progress, where the user progress is saved even when they close the page

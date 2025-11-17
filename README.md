@@ -11,3 +11,4 @@ For this project I will be creating an intrative map. Where users can play where
 - <https://github.com/BeReyes1/CMPM121-D3/tree/main>
   - For thier addtion of movment with arrow buttons
   - Thier use of maps for the cells
+  - Parts of thier adaptation for geolocation

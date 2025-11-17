@@ -40,6 +40,35 @@ const LOUVRE_LATLNG = leaflet.latLng(
 );
 
 /*
+ ** --Geolocation API to center map on user's location --
+ */
+
+// Taken insperation from BeReyes1's D3
+
+if (!navigator.geolocation) {
+  alert("Geolocation could not be found");
+} else {
+  navigator.geolocation.watchPosition(
+    (position) => {
+      const userLat = position.coords.latitude;
+      const userLng = position.coords.longitude;
+
+      const userLatLng = leaflet.latLng(userLat, userLng);
+      player.setLatLng(userLatLng);
+      playerRadius.setLatLng(userLatLng);
+      map.setView(userLatLng);
+
+      renderGems();
+    },
+    (error) => {
+      alert(`Geolocation error: ${error.message}`);
+      statusPanelDiv.textContent = "Using default location (Louvre Museum).";
+    },
+    { enableHighAccuracy: true, maximumAge: 30000, timeout: 27000 },
+  );
+}
+
+/*
  **  -- SET GAME VALUES --
  */
 const GAMEPLAY_ZOOM_LEVEL = 19;
@@ -128,7 +157,7 @@ function tokenGem(tier: Rank) {
     html:
       `<div style="font-size: 24px; transform: translate(-50%, -50%);">${gemEmoji}</div>`,
     iconSize: [24, 24],
-    iconAnchor: [-12, -12],
+    iconAnchor: [12, 12],
   });
 }
 
