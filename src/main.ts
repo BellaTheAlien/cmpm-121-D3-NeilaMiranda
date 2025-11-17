@@ -263,15 +263,11 @@ function spawnGems(i: number, j: number, r: Rank) {
 }
 
 let rank3GemTotal = 0;
-const winText = document.createElement("div");
-winText.id = "winText";
-winText.innerHTML =
-  `<div You stole from the Louve! That was easy, wasn't it? You win!</div>
-`;
 function rank3GemsCount() {
   rank3GemTotal += 1;
   if (rank3GemTotal >= 5) {
-    winText.append(winPanelDiv);
+    winPanelDiv.textContent =
+      "You stole from the Louvre! That was easy, wasn't it? You win!";
     map.off("click");
   }
 }
