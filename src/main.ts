@@ -31,6 +31,7 @@ document.body.append(statusPanelDiv);
 
 const winPanelDiv = document.createElement("div");
 winPanelDiv.id = "winPanel";
+document.body.append(winPanelDiv);
 
 // location
 const LOUVRE_LATLNG = leaflet.latLng(
@@ -44,11 +45,11 @@ const LOUVRE_LATLNG = leaflet.latLng(
 
 // Taken insperation from BeReyes1's D3
 
-let watchId = null;
+//const watchId = null;
 if (!navigator.geolocation) {
   alert("Geolocation could not be found");
 } else {
-  watchId = navigator.geolocation.watchPosition(
+  navigator.geolocation.watchPosition(
     (position) => {
       const userLat = position.coords.latitude;
       const userLng = position.coords.longitude;
@@ -66,10 +67,6 @@ if (!navigator.geolocation) {
     },
     { enableHighAccuracy: true, maximumAge: 30000, timeout: 27000 },
   );
-}
-
-if (watchId !== null) {
-  navigator.geolocation.clearWatch(watchId);
 }
 
 /*
@@ -181,7 +178,7 @@ function getTokenKey(i: number, j: number): string {
 }
 
 /*
- **  -- GENERATE IN GEMMS --
+ **  -- GENERATE IN GEMS --
  */
 
 function generateTokens(i: number, j: number) {
@@ -262,6 +259,8 @@ map.on("click", (event: leaflet.LeafletMouseEvent) => {
   } else {
     // when holding a gem
     if (state.hasGem && state.tier === hand) {
+      // save progress
+      saveProgress();
       // add the gems togther
       state.tier = Math.min(state.tier + 1, 3) as Rank;
       hand = null;
@@ -305,9 +304,24 @@ function rank3GemsCount() {
   if (rank3GemTotal >= 5) {
     winPanelDiv.textContent =
       "You stole from the Louvre! That was easy, wasn't it? You win!";
-    document.body.append(winPanelDiv);
     map.off("click");
+
+    Array.from(tokenCells.values()).forEach((marker) => marker.remove());
+    tokenCells.clear();
   }
+}
+
+/**
+ **  -- SAVE/LOAD FUNCTIONALITY --
+ */
+
+function saveProgress() {
+  localStorage.setItem("rank3GemTotal", rank3GemTotal.toString());
+}
+
+function loadProgress() {
+  const saved = localStorage.getItem("rank3GemTotal");
+  rank3GemTotal = saved ? parseInt(saved) : 0;
 }
 
 /*
@@ -350,3 +364,10 @@ function movePlayer(dx: number, dy: number) {
 
 // to spawn the gems when the game loads
 renderGems();
+loadProgress();
+inventoryUpdate();
+
+// save when the page is closed
+globalThis.addEventListener("beforeunload", () => {
+  saveProgress();
+});
