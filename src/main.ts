@@ -163,6 +163,21 @@ function tokenGem(tier: Rank) {
 }
 
 /*
+ ** conversion function from latlng to tile coordinates
+ */
+function latLngToTile(lat: number, lng: number): [number, number] {
+  const i = Math.floor((lat - LOUVRE_LATLNG.lat) / TILE_DEGREES - 0.5);
+  const j = Math.floor((lng - LOUVRE_LATLNG.lng) / TILE_DEGREES - 0.5);
+  return [i, j];
+}
+
+function tileToLatLng(i: number, j: number): leaflet.LatLng {
+  const lat = LOUVRE_LATLNG.lat + (i + 0.5) * TILE_DEGREES;
+  const lng = LOUVRE_LATLNG.lng + (j + 0.5) * TILE_DEGREES;
+  return leaflet.latLng(lat, lng);
+}
+
+/*
  **  -- MAP FOR THE TOKENS --
  */
 // insperation from BeReyes1's D3 with making the cells maps
@@ -203,12 +218,7 @@ function renderGems() {
 
   // did get help from Brace to understand the gems to spawn with the player
   const playerLatLng = player.getLatLng();
-  const playerLat = Math.round(
-    (playerLatLng.lat - LOUVRE_LATLNG.lat) / TILE_DEGREES - 0.5,
-  );
-  const playerLng = Math.round(
-    (playerLatLng.lng - LOUVRE_LATLNG.lng) / TILE_DEGREES - 0.5,
-  );
+  const [playerLat, playerLng] = latLngToTile(playerLatLng.lat, playerLatLng.lng);
 
   for (
     let i = playerLat - NEIGHBORHOOD_SIZE;
@@ -242,12 +252,7 @@ map.on("click", (event: leaflet.LeafletMouseEvent) => {
     return;
   }
 
-  const x = Math.round(
-    (clickLatLng.lat - LOUVRE_LATLNG.lat) / TILE_DEGREES - 0.5,
-  );
-  const y = Math.round(
-    (clickLatLng.lng - LOUVRE_LATLNG.lng) / TILE_DEGREES - 0.5,
-  );
+  const [x, y] = latLngToTile(clickLatLng.lat, clickLatLng.lng);
   const state = generateTokens(x, y);
 
   // empty hand
@@ -284,11 +289,7 @@ map.on("click", (event: leaflet.LeafletMouseEvent) => {
 });
 
 function spawnGems(i: number, j: number, r: Rank) {
-  const lat = LOUVRE_LATLNG.lat + (i + 0.5) * TILE_DEGREES;
-  const lng = LOUVRE_LATLNG.lng + (j + 0.5) * TILE_DEGREES;
-  const latlng = leaflet.latLng(lat, lng);
-
-  //const tier = currentRank(i, j);
+  const latlng = tileToLatLng(i, j);
   const marker = leaflet.marker(latlng, { icon: tokenGem(r) }).addTo(map);
   marker.bindTooltip(`Rank ${r} gem (click to interact)`);
   tokenCells.set(getTokenKey(i, j), marker);
