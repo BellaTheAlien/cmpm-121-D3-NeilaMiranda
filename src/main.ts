@@ -45,12 +45,15 @@ const LOUVRE_LATLNG = leaflet.latLng(
 
 // Taken insperation from BeReyes1's D3
 
-//const watchId = null;
+let useManualLocation = false;
+
 if (!navigator.geolocation) {
   alert("Geolocation could not be found");
+  useManualLocation = true;
 } else {
   navigator.geolocation.watchPosition(
     (position) => {
+      if (useManualLocation) return;
       const userLat = position.coords.latitude;
       const userLng = position.coords.longitude;
 
@@ -64,6 +67,8 @@ if (!navigator.geolocation) {
     (error) => {
       alert(`Geolocation error: ${error.message}`);
       statusPanelDiv.textContent = "Using default location (Louvre Museum).";
+      // if the GPS fails - use the buttons to move
+      useManualLocation = true;
     },
     { enableHighAccuracy: true, maximumAge: 30000, timeout: 27000 },
   );
@@ -116,8 +121,16 @@ playerRadius.addTo(map);
  */
 
 // creating the tokens and rank - from t4ylo
+
 type Rank = 1 | 2 | 3;
 let hand: Rank | null = null;
+
+interface GameState {
+  rank3GemTotal: number;
+  hand: Rank | null;
+
+  tokenData: Array<[string, { hasGem: boolean; tier?: Rank | undefined }]>;
+}
 
 /*
  **  -- INVENTORY --
@@ -267,8 +280,6 @@ map.on("click", (event: leaflet.LeafletMouseEvent) => {
   } else {
     // when holding a gem
     if (state.hasGem && state.tier === hand) {
-      // save progress
-      saveProgress();
       // add the gems togther
       state.tier = Math.min(state.tier + 1, 3) as Rank;
       hand = null;
@@ -289,6 +300,7 @@ map.on("click", (event: leaflet.LeafletMouseEvent) => {
   }
   inventoryUpdate();
   renderGems();
+  saveProgress();
 });
 
 function spawnGems(i: number, j: number, r: Rank) {
@@ -308,8 +320,13 @@ function rank3GemsCount() {
   if (rank3GemTotal >= 5) {
     winPanelDiv.textContent =
       "YOU STOLE MY GEMS!! That was easy, wasn't it? You win! 👑";
+
+    // remove all the gems and stop interaction
     Array.from(tokenCells.values()).forEach((marker) => marker.remove());
     tokenCells.clear();
+    tokenStates.clear();
+    localStorage.clear();
+
     map.off("click");
   }
 }
@@ -319,12 +336,26 @@ function rank3GemsCount() {
  */
 
 function saveProgress() {
-  localStorage.setItem("rank3GemTotal", rank3GemTotal.toString());
+  const gameState: GameState = {
+    rank3GemTotal: rank3GemTotal,
+    hand: hand,
+    tokenData: Array.from(tokenStates.entries()),
+  };
+  localStorage.setItem("gameState", JSON.stringify(gameState));
 }
 
 function loadProgress() {
-  const saved = localStorage.getItem("rank3GemTotal");
-  rank3GemTotal = saved ? parseInt(saved) : 0;
+  const saved = localStorage.getItem("gameState");
+  if (saved) {
+    const gameState: GameState = JSON.parse(saved);
+    rank3GemTotal = gameState.rank3GemTotal;
+    hand = gameState.hand;
+    tokenStates.clear();
+    gameState.tokenData.forEach(([key, value]) => {
+      tokenStates.set(key, value);
+    });
+  }
+  //rank3GemTotal = saved ? parseInt(saved) : 0;
 }
 
 /*
@@ -352,6 +383,7 @@ points.forEach((config) => {
 // function taken insperation from BeReyes1's D3
 // calculates where the player moved to
 function movePlayer(dx: number, dy: number) {
+  useManualLocation = true;
   const current = player.getLatLng();
   const newPos = leaflet.latLng(
     current.lat + dy * TILE_DEGREES,
