@@ -1,4 +1,11 @@
-#controlPanel {
+#inventoryPanel {
+  padding: 1rem;
+  color: rgb(0, 0, 0);
+  background-color: rgb(126, 126, 126);
+  border-radius: 6px;
+}
+
+#navigationPanel {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
@@ -9,6 +16,16 @@
 
 #statusPanel {
   padding: 1rem;
+}
+
+#winPanel {
+  padding: 1rem;
+  border-radius: 6px;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+#winText {
+  color: rgb(0, 0, 0);
 }
 
 #mapDiv {
@@ -38,6 +55,7 @@
 .point-button:hover {
   background-color: rgb(77, 77, 77);
 }
+
 #north-point {
   grid-column: 2;
   grid-row: 1;

@@ -12,17 +12,26 @@ import luck from "./_luck.ts";
  **  -- UI ELEMENTS --
  */
 
-const controlPanelDiv = document.createElement("div");
-controlPanelDiv.id = "controlPanel";
-document.body.append(controlPanelDiv);
+const inventoryPanelDiv = document.createElement("div");
+inventoryPanelDiv.id = "inventoryPanel";
+document.body.append(inventoryPanelDiv);
 
-const mapDiv = document.createElement("div");
-mapDiv.id = "mapDiv";
-document.body.append(mapDiv);
+const navigationPanelDiv = document.createElement("div");
+navigationPanelDiv.id = "navigationPanel";
+navigationPanelDiv.textContent = "Navigation:";
+document.body.append(navigationPanelDiv);
 
 const statusPanelDiv = document.createElement("div");
 statusPanelDiv.id = "statusPanel";
 document.body.append(statusPanelDiv);
+
+const winPanelDiv = document.createElement("div");
+winPanelDiv.id = "winPanel";
+document.body.append(winPanelDiv);
+
+const mapDiv = document.createElement("div");
+mapDiv.id = "mapDiv";
+document.body.append(mapDiv);
 
 // location
 const LOUVRE_LATLNG = leaflet.latLng(
@@ -88,7 +97,7 @@ inventory.id = "panel";
 inventory.innerHTML = ` <h3>Inventory</h3>
 <div class = "row"><span>Holding </span><span id = "hand" class = "badge">Empty</span></div>
 `;
-controlPanelDiv.append(inventory);
+inventoryPanelDiv.append(inventory);
 
 function inventoryUpdate() {
   (inventory.querySelector("#hand") as HTMLElement).textContent = hand
@@ -254,11 +263,15 @@ function spawnGems(i: number, j: number, r: Rank) {
 }
 
 let rank3GemTotal = 0;
+const winText = document.createElement("div");
+winText.id = "winText";
+winText.innerHTML =
+  `<div You stole from the Louve! That was easy, wasn't it? You win!</div>
+`;
 function rank3GemsCount() {
   rank3GemTotal += 1;
   if (rank3GemTotal >= 5) {
-    statusPanelDiv.textContent =
-      "You stole from the Louve! That was easy, wasn't it? You win!";
+    winText.append(winPanelDiv);
     map.off("click");
   }
 }
@@ -282,7 +295,7 @@ points.forEach((config) => {
   button.textContent = config.text;
   button.className = "point-button";
   button.addEventListener("click", () => movePlayer(config.dx, config.dy));
-  controlPanelDiv.append(button);
+  navigationPanelDiv.append(button);
 });
 
 // function taken insperation from BeReyes1's D3
