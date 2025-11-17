@@ -13,7 +13,7 @@ import luck from "./_luck.ts";
  */
 
 const controlPanelDiv = document.createElement("div");
-controlPanelDiv.id = "constrolPanel";
+controlPanelDiv.id = "controlPanel";
 document.body.append(controlPanelDiv);
 
 const mapDiv = document.createElement("div");
@@ -116,7 +116,10 @@ function tokenGem(tier: Rank) {
   const gemEmoji = tier === 1 ? "💎" : tier === 2 ? "💍" : "👑";
   return leaflet.divIcon({
     className: "gemText",
-    html: `<div> ${gemEmoji} </div>`,
+    html:
+      `<div style="font-size: 24px; transform: translate(-50%, -50%);">${gemEmoji}</div>`,
+    iconSize: [24, 24],
+    iconAnchor: [-12, -12],
   });
 }
 
