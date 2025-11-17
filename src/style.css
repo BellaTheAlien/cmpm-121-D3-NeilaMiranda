@@ -21,11 +21,12 @@
 
 #winPanel {
   padding: 1rem;
+  margin: 8px;
   border-radius: 1.5em;
   font-size: 1.5rem;
   font-weight: bold;
-  color: rgb(0, 0, 0);
-  background-color: rgba(217, 252, 213, 0.8);
+  color: gold;
+  background-color: rgba(0, 0, 0, 0.541);
   max-width: 800px;
 }
 

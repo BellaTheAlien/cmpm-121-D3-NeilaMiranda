@@ -307,11 +307,10 @@ function rank3GemsCount() {
   rank3GemTotal += 1;
   if (rank3GemTotal >= 5) {
     winPanelDiv.textContent =
-      "You stole from the Louvre! That was easy, wasn't it? You win!";
-    map.off("click");
-
+      "YOU STOLE MY GEMS!! That was easy, wasn't it? You win! 👑";
     Array.from(tokenCells.values()).forEach((marker) => marker.remove());
     tokenCells.clear();
+    map.off("click");
   }
 }
 
