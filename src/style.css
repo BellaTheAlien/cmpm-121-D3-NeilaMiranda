@@ -1,8 +1,9 @@
 #inventoryPanel {
-  padding: 1rem;
+  padding: 0.08rem;
   color: rgb(0, 0, 0);
-  background-color: rgb(126, 126, 126);
+  background-color: rgb(80, 66, 66);
   border-radius: 6px;
+  max-width: 800px;
 }
 
 #navigationPanel {
@@ -20,12 +21,12 @@
 
 #winPanel {
   padding: 1rem;
-  border-radius: 6px;
+  border-radius: 1.5em;
   font-size: 1.5rem;
   font-weight: bold;
-}
-#winText {
   color: rgb(0, 0, 0);
+  background-color: rgba(217, 252, 213, 0.8);
+  max-width: 800px;
 }
 
 #mapDiv {
@@ -36,14 +37,15 @@
 }
 
 #panel {
-  padding: 1rem;
-  color: rgb(0, 0, 0);
-  background-color: rgb(126, 126, 126);
+  padding: 0.05rem;
+  color: rgb(0, 37, 3);
+  background-color: rgb(189, 216, 171);
   border-radius: 6px;
+  max-width: 800px;
 }
 
 #hand {
-  color: rgb(17, 0, 255);
+  color: rgb(204, 0, 255);
 }
 
 .point-button {
@@ -53,7 +55,9 @@
   cursor: pointer;
 }
 .point-button:hover {
-  background-color: rgb(77, 77, 77);
+  padding: 8px;
+  background-color: rgb(88, 117, 141);
+  border-radius: 6px;
 }
 
 #north-point {

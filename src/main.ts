@@ -12,6 +12,10 @@ import luck from "./_luck.ts";
  **  -- UI ELEMENTS --
  */
 
+const mapDiv = document.createElement("div");
+mapDiv.id = "mapDiv";
+document.body.append(mapDiv);
+
 const inventoryPanelDiv = document.createElement("div");
 inventoryPanelDiv.id = "inventoryPanel";
 document.body.append(inventoryPanelDiv);
@@ -27,11 +31,6 @@ document.body.append(statusPanelDiv);
 
 const winPanelDiv = document.createElement("div");
 winPanelDiv.id = "winPanel";
-document.body.append(winPanelDiv);
-
-const mapDiv = document.createElement("div");
-mapDiv.id = "mapDiv";
-document.body.append(mapDiv);
 
 // location
 const LOUVRE_LATLNG = leaflet.latLng(
@@ -45,10 +44,11 @@ const LOUVRE_LATLNG = leaflet.latLng(
 
 // Taken insperation from BeReyes1's D3
 
+let watchId = null;
 if (!navigator.geolocation) {
   alert("Geolocation could not be found");
 } else {
-  navigator.geolocation.watchPosition(
+  watchId = navigator.geolocation.watchPosition(
     (position) => {
       const userLat = position.coords.latitude;
       const userLng = position.coords.longitude;
@@ -66,6 +66,10 @@ if (!navigator.geolocation) {
     },
     { enableHighAccuracy: true, maximumAge: 30000, timeout: 27000 },
   );
+}
+
+if (watchId !== null) {
+  navigator.geolocation.clearWatch(watchId);
 }
 
 /*
@@ -291,12 +295,17 @@ function spawnGems(i: number, j: number, r: Rank) {
   tokenCells.set(getTokenKey(i, j), marker);
 }
 
+/*
+ **  -- WIN CONDITION --
+ */
+
 let rank3GemTotal = 0;
 function rank3GemsCount() {
   rank3GemTotal += 1;
   if (rank3GemTotal >= 5) {
     winPanelDiv.textContent =
       "You stole from the Louvre! That was easy, wasn't it? You win!";
+    document.body.append(winPanelDiv);
     map.off("click");
   }
 }
