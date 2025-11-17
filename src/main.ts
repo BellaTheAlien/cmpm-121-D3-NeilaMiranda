@@ -218,7 +218,10 @@ function renderGems() {
 
   // did get help from Brace to understand the gems to spawn with the player
   const playerLatLng = player.getLatLng();
-  const [playerLat, playerLng] = latLngToTile(playerLatLng.lat, playerLatLng.lng);
+  const [playerLat, playerLng] = latLngToTile(
+    playerLatLng.lat,
+    playerLatLng.lng,
+  );
 
   for (
     let i = playerLat - NEIGHBORHOOD_SIZE;
