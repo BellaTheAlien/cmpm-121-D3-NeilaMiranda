@@ -33,7 +33,7 @@ const winPanelDiv = document.createElement("div");
 winPanelDiv.id = "winPanel";
 document.body.append(winPanelDiv);
 
-// location
+// defult location
 const LOUVRE_LATLNG = leaflet.latLng(
   48.86090399522021,
   2.3376225397014716,
@@ -125,6 +125,7 @@ playerRadius.addTo(map);
 type Rank = 1 | 2 | 3;
 let hand: Rank | null = null;
 
+// Memento Pattern for saving/loading game state
 interface GameState {
   rank3GemTotal: number;
   hand: Rank | null;
@@ -164,6 +165,7 @@ function currentRank(i: number, j: number): Rank {
   return 3;
 }
 
+// Flyweight pattern for the gem icons
 function tokenGem(tier: Rank) {
   const gemEmoji = tier === 1 ? "💎" : tier === 2 ? "💍" : "👑";
   return leaflet.divIcon({
@@ -195,6 +197,7 @@ function tileToLatLng(i: number, j: number): leaflet.LatLng {
  */
 // insperation from BeReyes1's D3 with making the cells maps
 
+// the Flyweight pattern for the token cells and states
 const tokenCells = new Map<string, L.Marker>();
 const tokenStates = new Map<
   string,
@@ -355,7 +358,6 @@ function loadProgress() {
       tokenStates.set(key, value);
     });
   }
-  //rank3GemTotal = saved ? parseInt(saved) : 0;
 }
 
 /*
